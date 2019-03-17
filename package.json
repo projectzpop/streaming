@@ -1,0 +1,19 @@
+{
+  "name": "hls",
+  "version": "1.0.0",
+  "description": "hls for nugu",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Sangho Kim",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^5.15.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  },
+  "dependencies": {
+    "hls-server": "^1.5.0"
+  }
+}
