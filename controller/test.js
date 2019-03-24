@@ -44,6 +44,7 @@ class NPKResponse {
 }
 
 const nuguReq = function (httpReq, httpRes, next) {
+  console.log('aaa');
   const npkResponse = new NPKResponse();
   const npkRequest = new NPKRequest(httpReq);
   npkRequest.do(npkResponse);
