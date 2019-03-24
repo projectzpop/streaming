@@ -6,6 +6,7 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const hlsRouter = require('./routes/hls');
+const testRouter = require('./routes/test');
 
 const app = express();
 
