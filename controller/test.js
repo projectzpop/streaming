@@ -22,6 +22,10 @@ class NPKRequest {
           testCode: '헬로',
         });
         break;
+      case 'answerResultTrueFalse':
+        npkResponse.setOutputParameters({
+          result: 'success',
+        });
       default:
         break;
     }
