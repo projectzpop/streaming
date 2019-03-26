@@ -2,7 +2,7 @@ class NPKRequest {
   constructor(httpReq) {
     this.context = httpReq.body.context;
     this.action = httpReq.body.action;
-    console.log(`NPKRequest: ${JSON.stringify(this.context)}, ${JSON.stringify(this.action)}`);
+    console.log(`\nNPKRequest: ${JSON.stringify(this.context)}, ${JSON.stringify(this.action)}`);
   }
 
   do(npkResponse) {
@@ -10,7 +10,7 @@ class NPKRequest {
   }
 
   actionRequest(npkResponse) {
-    console.log('actionRequest');
+    console.log('\nactionRequest');
     console.dir(this.action);
 
     const { actionName } = this.action;
@@ -22,9 +22,16 @@ class NPKRequest {
           testCode: '헬로',
         });
         break;
+      case 'singQuiz':
+        console.log(`age: ${parameters.userAge}`);
+        npkResponse.setOutputParameters({
+          quizLyricsNugu: `나이가 ${parameters.userAge}이시군요! 제뉴어리 페뷰러리 마치 짝짝짝 에이프럴 메이 준 짝짝짝 줄라이 어거스트 셉템벌 악토벌 노벰벌 디쎔벌`,
+          quizTitleNugu: '영어 노래',
+        });
+        break;
       case 'answerResultTrueFalse':
         npkResponse.setOutputParameters({
-          result: 'success',
+          resultCode: 'true',
         });
       default:
         break;
@@ -34,7 +41,7 @@ class NPKRequest {
 
 class NPKResponse {
   constructor() {
-    console.log('NPKResponse constructor');
+    console.log('\nNPKResponse constructor');
 
     this.version = '2.0';
     this.resultCode = 'OK';
@@ -48,11 +55,10 @@ class NPKResponse {
 }
 
 const nuguReq = function (httpReq, httpRes, next) {
-  console.log('aaa');
   const npkResponse = new NPKResponse();
   const npkRequest = new NPKRequest(httpReq);
   npkRequest.do(npkResponse);
-  console.log(`NPKResponse: ${JSON.stringify(npkResponse)}`);
+  console.log(`\nNPKResponse: ${JSON.stringify(npkResponse)}`);
   return httpRes.send(npkResponse);
 };
 
