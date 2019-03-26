@@ -12,7 +12,8 @@
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
-    "mysql2": "^1.6.5"
+    "mysql2": "^1.6.5",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "eslint": "^5.15.2",

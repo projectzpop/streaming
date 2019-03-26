@@ -5,6 +5,7 @@ const testController = require('../controller/test');
 
 // heart beating..
 router.get('/health', (req, res, next) => {
+  console.log(req.headers.host);
   res.send('OK');
 });
 

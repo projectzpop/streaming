@@ -1,4 +1,7 @@
+const uuid = require('uuid').v4;
 const mysql = require('mysql2/promise');
+
+const HELP_FILE_PATH = 'http://ssunno.iptime.org:3000/hls/help.m3u8';
 
 const pool = mysql.createPool({
   host: 'localhost',
@@ -6,6 +9,27 @@ const pool = mysql.createPool({
   password: 'sun',
   database: 'nugu',
 });
+
+class Directive {
+  constructor({ type, audioItem }) {
+    this.type = type;
+    this.audioItem = audioItem;
+  }
+}
+
+function audioPlayerDirective(soundFileName) {
+  return new Directive({
+    type: 'AudioPlayer.Play',
+    audioItem: {
+      stream: {
+        url: soundFileName,
+        offsetInMilliseconds: 0,
+        token: uuid(),
+        expectedPreviousToken: 'expectedPreviousToken',
+      },
+    },
+  });
+}
 
 class NPKRequest {
   constructor(httpReq) {
@@ -36,6 +60,9 @@ class NPKRequest {
           quizLyricsNugu: result.lyrics,
           quizTitleNugu: result.title,
         });
+        break;
+      case 'singHelp':
+        npkResponse.addDirective(audioPlayerDirective(HELP_FILE_PATH));
         break;
       default:
         break;
@@ -72,6 +99,10 @@ class NPKResponse {
 
   setOutputParameters(obj) {
     this.output = obj;
+  }
+
+  addDirective(directive) {
+    this.directives.push(directive);
   }
 }
 
