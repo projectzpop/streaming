@@ -23,16 +23,16 @@ class NPKRequest {
         });
         break;
       case 'singQuiz':
-        console.log(`age: ${parameters.userAge}`);
         npkResponse.setOutputParameters({
-          quizLyricsNugu: `나이가 ${parameters.userAge}이시군요! 제뉴어리 페뷰러리 마치 짝짝짝 에이프럴 메이 준 짝짝짝 줄라이 어거스트 셉템벌 악토벌 노벰벌 디쎔벌`,
-          quizTitleNugu: '영어 노래',
+          quizLyricsNugu: `나이가 ${parameters.userAge.value}이시군요! 제뉴어리 페뷰러리 마치 짝짝짝 에이프럴 메이 준 짝짝짝 줄라이 어거스트 셉템벌 악토벌 노벰벌 디쎔벌`,
+          quizTitleNugu: '먼쓰 쏭',
         });
         break;
       case 'answerResultTrueFalse':
         npkResponse.setOutputParameters({
           resultCode: 'true',
         });
+        break;
       default:
         break;
     }
