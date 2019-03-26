@@ -50,6 +50,8 @@ class NPKRequest {
     console.log(age);
     const [rows] = await connection.query(query, [age]);
 
+    connection.release();
+
     return Promise.resolve({
       lyrics: rows[0].lyrics,
       title: rows[0].title,
