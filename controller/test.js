@@ -1,3 +1,12 @@
+const mysql = require('mysql2/promise');
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'sun',
+  database: 'nugu',
+});
+
 class NPKRequest {
   constructor(httpReq) {
     this.context = httpReq.body.context;
@@ -5,38 +14,47 @@ class NPKRequest {
     console.log(`\nNPKRequest: ${JSON.stringify(this.context)}, ${JSON.stringify(this.action)}`);
   }
 
-  do(npkResponse) {
-    this.actionRequest(npkResponse);
+  async do(npkResponse) {
+    await this.actionRequest(npkResponse);
   }
 
-  actionRequest(npkResponse) {
+  async actionRequest(npkResponse) {
+    const conn = await pool.getConnection(async con => con);
+
     console.log('\nactionRequest');
     console.dir(this.action);
 
     const { actionName } = this.action;
     const { parameters } = this.action;
 
+    let result;
     switch (actionName) {
-      case 'testQuiz':
-        npkResponse.setOutputParameters({
-          testCode: '헬로',
-        });
-        break;
       case 'singQuiz':
+        result = await this.getRandomQuestionByAge(conn, parameters.userAge.value);
+
         npkResponse.setOutputParameters({
-          quizLyricsNugu: `나이가 ${parameters.userAge.value}이시군요! 제뉴어리 페뷰러리 마치 짝짝짝 에이프럴 메이 준 짝짝짝 줄라이 어거스트 셉템벌 악토벌 노벰벌 디쎔벌`,
-          quizTitleNugu: '먼쓰 쏭',
-        });
-        break;
-      case 'answerResultTrueFalse':
-        console.log(`사용자의 대답: ${parameters.lyricsAnswer.value}`);
-        npkResponse.setOutputParameters({
-          resultCode: 'true',
+          quizLyricsNugu: result.lyrics,
+          quizTitleNugu: result.title,
         });
         break;
       default:
         break;
     }
+  }
+
+  async getRandomQuestionByAge(connection, age) {
+    const query = 'select * from song_by_age '
+      + 'left outer join song on song_by_age.song_idx = song.idx '
+      + 'where age_code = ? order by rand() limit 1; ';
+    console.log(query);
+    console.log(age);
+    const [rows] = await connection.query(query, [age]);
+
+    return Promise.resolve({
+      lyrics: rows[0].lyrics,
+      title: rows[0].title,
+      singer: rows[0].singer,
+    });
   }
 }
 
@@ -55,10 +73,10 @@ class NPKResponse {
   }
 }
 
-const nuguReq = function (httpReq, httpRes, next) {
+const nuguReq = async function (httpReq, httpRes, next) {
   const npkResponse = new NPKResponse();
   const npkRequest = new NPKRequest(httpReq);
-  npkRequest.do(npkResponse);
+  await npkRequest.do(npkResponse);
   console.log(`\nNPKResponse: ${JSON.stringify(npkResponse)}`);
   return httpRes.send(npkResponse);
 };
