@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', testRouter);
+app.use('/singqtank', testRouter);
 app.use('/hls', hlsRouter);
 
 // catch 404 and forward to error handler

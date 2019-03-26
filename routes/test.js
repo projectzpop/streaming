@@ -3,12 +3,13 @@ const express = require('express');
 const router = express.Router();
 const testController = require('../controller/test');
 
-router.post('/singqtank/*', testController);
-
 // heart beating..
-router.get('/singqtank/health', (req, res, next) => {
+router.get('/health', (req, res, next) => {
   res.send('OK');
 });
+
+// Action Handler
+router.post('/*', testController);
 
 
 module.exports = router;
