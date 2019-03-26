@@ -29,7 +29,7 @@ class NPKRequest {
         });
         break;
       case 'answerResultTrueFalse':
-        console.log(`사용자의 대답: ${parameters.lyricAnswer.value}`);
+        console.log(`사용자의 대답: ${parameters.lyricsAnswer.value}`);
         npkResponse.setOutputParameters({
           resultCode: 'true',
         });
