@@ -1,7 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const testController = require('../controller/test');
+const mealController = require('../controller/meal');
 
 // heart beating..
 router.get('/health', (req, res, next) => {
@@ -10,7 +10,7 @@ router.get('/health', (req, res, next) => {
 });
 
 // Action Handler
-router.post('/*', testController);
+router.post('/*', mealController);
 
 
 module.exports = router;

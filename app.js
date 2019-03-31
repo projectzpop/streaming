@@ -6,7 +6,8 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const hlsRouter = require('./routes/hls');
-const testRouter = require('./routes/test');
+const songRouter = require('./routes/meal');
+const mealRouter = require('./routes/song');
 
 const app = express();
 
@@ -20,8 +21,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/singqtank', testRouter);
+app.use('/singqtank', songRouter);
 app.use('/hls', hlsRouter);
+app.use('/whateattoday', mealRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
