@@ -6,8 +6,8 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const hlsRouter = require('./routes/hls');
-const songRouter = require('./routes/meal');
-const mealRouter = require('./routes/song');
+const mealRouter = require('./routes/meal');
+const songRouter = require('./routes/song');
 const hosRouter = require('./routes/hospital');
 
 const app = express();
