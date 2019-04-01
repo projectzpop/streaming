@@ -5,6 +5,7 @@ const request = require('request-promise-native');
 const qs = require('querystring');
 const _ = require('underscore');
 const { task } = require('../util/asyncHelper');
+const moment = require('moment-timezone');
 
 const HELP_FILE_PATH = '';
 const API_ROOT_PATH = 'http://apis.data.go.kr/B552657/HsptlAsembySearchService/getHsptlMdcncListInfoInqire';
@@ -153,6 +154,7 @@ class NPKRequest {
       default:
         break;
     }
+    conn.release();
   }
 
   async getHospital(connection, params) {
@@ -194,7 +196,7 @@ class NPKRequest {
       obj = null;
       totalCount = -1;
       if (parser.validate(result)) {
-        obj = parser.parse(result);
+        obj = parser.parse(result, { parseNodeValue: false });
         totalCount = obj.response.body.items.item.length;
       }
 
@@ -202,7 +204,48 @@ class NPKRequest {
         return [];
       }
 
-      return _.pluck(obj.response.body.items.item, 'dutyName');
+      let hospitalList = JSON.parse(JSON.stringify(obj.response.body.items.item));
+      let finalData = [];
+
+      if (isOpen === 'true') {
+        const current = moment().tz('Asia/Seoul');
+        const holList = await this.getHolidays(connection, 2019);
+        const isHoliday = (typeof holList.find(hol => hol.year === current.year() && hol.month === (current.month() + 1) && hol.day === current.date()) !== 'undefined');
+        console.log(isHoliday);
+
+        // for
+        for (let i = 0; i < hospitalList.length; i += 1) {
+          const hospital = hospitalList[i];
+
+          // 요일 보정
+          let dayOfWeek = current.day() === 0 ? 7 : current.day();
+          if (isHoliday) dayOfWeek = 8;
+
+          const startStr = `dutyTime${dayOfWeek}s`;
+          const closeStr = `dutyTime${dayOfWeek}c`;
+
+          // 해당 요일/공휴일 영업 안함
+          if (typeof hospital[startStr] !== 'string'
+            || typeof hospital[closeStr] !== 'string'
+            || hospital[startStr].length !== 4
+            || hospital[closeStr].length !== 4) {
+            continue;
+          }
+
+          // 영업 중인지 계산
+          const timeStandard = new Date();
+          const timeStandard2 = moment().tz('Asia/Seoul');
+          const startTime = moment(timeStandard).tz('Asia/Seoul').hour(parseInt(hospital[startStr].substr(0, 2), 10)).minute(parseInt(hospital[closeStr].substr(2), 10));
+          const closeTime = moment(timeStandard).tz('Asia/Seoul').hour(parseInt(hospital[closeStr].substr(0, 2), 10)).minute(parseInt(hospital[closeStr].substr(2), 10));
+          const target = moment(timeStandard).tz('Asia/Seoul').hour(timeStandard2.hour()).minute(timeStandard2.minute());
+
+          if (target.isBetween(startTime, closeTime, 'minute', '[]')) finalData.push(hospital);
+        }
+      } else {
+        finalData = hospitalList;
+      }
+
+      return _.pluck(finalData, 'dutyName');
     } catch (e) {
       return null;
     }
@@ -216,15 +259,20 @@ class NPKRequest {
   }
 
 
+  async getHolidays(connection, year) {
+    const query = 'select * from holidays where year = ? ;';
+    const [rows] = await connection.query(query, [year]);
+
+    return Promise.resolve(rows);
+  }
+
+
   async getRandomQuestionByAge(connection, age) {
     const query = 'select * from song_by_age '
       + 'left outer join song on song_by_age.song_idx = song.idx '
       + 'where age_code = ? order by rand() limit 1; ';
-    console.log(query);
-    console.log(age);
-    const [rows] = await connection.query(query, [age]);
 
-    connection.release();
+    const [rows] = await connection.query(query, [age]);
 
     return Promise.resolve({
       lyrics: rows[0].lyrics,
