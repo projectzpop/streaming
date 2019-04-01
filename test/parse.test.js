@@ -35,8 +35,8 @@ describe('module test', () => {
     };
 
     if (parser.validate(result) === true) {
-      const jsonObj = parser.parse(parser, options);
+      const jsonObj = parser.parse(result);
       console.log(jsonObj);
     }
-  }).timeout(10000);
+  }).timeout(20000);
 });

@@ -8,6 +8,7 @@ const indexRouter = require('./routes/index');
 const hlsRouter = require('./routes/hls');
 const songRouter = require('./routes/meal');
 const mealRouter = require('./routes/song');
+const hosRouter = require('./routes/hospital');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/singqtank', songRouter);
 app.use('/hls', hlsRouter);
 app.use('/whateattoday', mealRouter);
+app.use('/hospitalfinder', hosRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
