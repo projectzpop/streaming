@@ -118,7 +118,7 @@ class NPKRequest {
     const gu = (parameters.gu) ? parameters.gu.value : null;
     const dong = (parameters.dong) ? parameters.dong.value : null;
     const subject = (parameters.subject) ? parameters.subject.value : null;
-    const isOpen = (parameters.isOpen) ? parameters.isOpen.value : null;
+    const isOpen = (parameters.isOpen) ? parameters.isOpen.value : 'false';
 
     switch (actionName) {
       case 'getHospital':
