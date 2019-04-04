@@ -207,7 +207,7 @@ class NPKRequest {
       let hospitalList = JSON.parse(JSON.stringify(obj.response.body.items.item));
       let finalData = [];
 
-      if (isOpen === 'true') {
+      if (isOpen.toUpperCase() === 'true'.toUpperCase()) {
         const current = moment().tz('Asia/Seoul');
         const holList = await this.getHolidays(connection, 2019);
         const isHoliday = (typeof holList.find(hol => hol.year === current.year() && hol.month === (current.month() + 1) && hol.day === current.date()) !== 'undefined');
